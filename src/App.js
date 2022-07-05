@@ -37,8 +37,8 @@ function App() {
     <>
     <PokemonList pokemon={pokemon} />
     <Pagination
-      goToNextPage={goToNextPage}
-      goToPreviousPage={goToPreviousPage}/>
+      goToNextPage={nextPageUrl ? goToNextPage: null}
+      goToPreviousPage={prevPageUrl ? goToPreviousPage: null}/>
     </>
   );
 }
