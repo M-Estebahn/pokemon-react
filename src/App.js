@@ -12,14 +12,22 @@ function App() {
 
   useEffect(() => {
     setLoading(true);
-    let cancel
-    axios.get(currentPageUrl, {cancelToken: new axios.CancelToken(c=> cancel=c)}).then((res) => {
+    axios.get(currentPageUrl).then(res => {
       setLoading(false);
       setNextPageUrl(res.data.next)
       setPrevPageUrl(res.data.previous)
-       setPokemon(res.data.results.map((p) => p.name));
+      getPokemon(res.data.results);
     })
-    return ()  => cancel()
+     const getPokemon = async (res) => {
+       res.map(async (p) => {
+         const result = await axios.get(p.url);
+         setPokemon((state) => {
+           state = [...state, result.data];
+           return state;
+         });
+       });
+     };
+    
   }, [currentPageUrl])
 
   function goToNextPage(){
@@ -37,8 +45,9 @@ function App() {
     <>
     <PokemonList pokemon={pokemon} />
     <Pagination
-      goToNextPage={nextPageUrl ? goToNextPage: null}
-      goToPreviousPage={prevPageUrl ? goToPreviousPage: null}/>
+          goToPreviousPage={prevPageUrl ? goToPreviousPage : null}
+          goToNextPage={nextPageUrl ? goToNextPage : null} />      
+
     </>
   );
 }
